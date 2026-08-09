@@ -14,6 +14,36 @@ El ecosistema está compuesto por **4 procesos independientes** que se comunican
 3. **TxMemory**: Gestor de Memoria RAM, paginación de 4KB y algoritmo de reemplazo LRU.
 4. **TxFS**: File System binario personalizado en disco administrado mediante una File Allocation Table.
 
+### Formato de Registros en Disco
+Cada página de 4KB en `TxMemory` y bloque en `TxFS` almacena estructuras de datos binarias `UserRecord` empaquetadas con `#pragma pack(1)`:
+
+```cpp
+struct UserRecord {
+    uint32_t id;
+    char nombre[32];
+    int32_t saldo;
+    uint8_t is_active; // 1 = activo, 0 = inactivo
+};
+```
+
+### Flujo de Consulta y Renderizado de Filas
+1. **Petición**: `TxClient` envía la query `SELECT * FROM usuarios;` o `UPDATE usuarios SET saldo = 500 WHERE id = 5;`.
+2. **Concurrencia**: `TxKernel` solicita el Lock correspondiente (`S` o `X`) al `LockManager`.
+3. **Paginación**: `TxKernel` solicita la página 1 a `TxMemory`. Si ocurre un *Page Fault*, `TxMemory` la recupera desde `TxFS` (`txdb_storage.dat`).
+4. **Modificación Binaria**: En caso de `UPDATE`, `TxKernel` localiza la fila por `id` en la página RAM y actualiza su campo `saldo`.
+5. **Renderizado en Consola**: `TxKernel` retorna el payload binario de 4KB al `TxClient`, el cual castea los registros y dibuja una tabla formateada en pantalla:
+
+```text
++----+--------------------------------+--------+
+| ID | Nombre                         | Saldo  |
++----+--------------------------------+--------+
+| 1  | Juan Perez                     |   1000 |
+| 2  | Maria Gomez                    |   2500 |
+| 5  | Carlos Rodriguez               |    500 |
++----+--------------------------------+--------+
+ (3 fila(s) leída(s) del disco binario txdb_storage.dat)
+```
+
 ---
 
 ## 2. Análisis Exhaustivo de Seguridad, Tolerancia a Fallos y Manejo de Recursos
