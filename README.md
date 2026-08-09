@@ -108,7 +108,7 @@ Para validar la resiliencia y el comportamiento del motor en tu máquina:
 
 ### D. Cómo Levantar el Clúster Distribuido Completo
 
-Para levantar el sistema de base de datos completo de forma distribuida, abrí **4 ventanas independientes de PowerShell/CMD** y ejecutá los módulos en el siguiente orden estricto (Bottom-Up):
+Para levantar el sistema de base de datos completo de forma distribuida, abrí 4 ventanas independientes de PowerShell/CMD y ejecutá los módulos en el siguiente orden:
 
 #### Terminal 1: Módulo TxFS (Almacenamiento Persistente)
 ```powershell
