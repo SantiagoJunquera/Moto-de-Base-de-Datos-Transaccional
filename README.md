@@ -4,16 +4,16 @@
 
 ## 1. Visión General del Proyecto
 
-**TxDB-OS** es un motor de base de datos transaccional distribuido programado íntegramente en **C++20 moderno**. El sistema imita la arquitectura interna de un motor de base de datos real (como PostgreSQL o MySQL), abstrayéndose del sistema de archivos y gestor de memoria nativos del host para sus operaciones críticas.
+**TxDB-OS** es un motor de base de datos transaccional distribuido programado íntegramente en C++. El sistema imita la arquitectura interna de un motor de base de datos real, abstrayéndose del sistema de archivos y gestor de memoria nativos del host para sus operaciones críticas.
 
-El ecosistema está compuesto por **4 procesos independientes** que se comunican entre sí exclusivamente a través de sockets TCP/IP de bajo nivel en un esquema multinivel:
+El ecosistema está compuesto por 4 procesos independientes que se comunican entre sí exclusivamente a través de sockets TCP/IP de bajo nivel en un esquema multinivel:
 
 1. **TxClient**: Consola interactiva REPL con formato de tabla ASCII y conexiones Keep-Alive.
-2. **TxKernel**: Orquestador central, gestor de concurrencia (Strict 2PL) y detector de Deadlocks mediante grafos dirigidos.
-3. **TxMemory**: Gestor de Memoria RAM (Buffer Pool), paginación de 4KB y algoritmo de reemplazo LRU en \(O(1)\).
-4. **TxFS**: File System binario personalizado en disco (`txdb_storage.dat`) administrado mediante una File Allocation Table (FAT).
+2. **TxKernel**: Orquestador central, gestor de concurrencia y detector de Deadlocks mediante grafos dirigidos.
+3. **TxMemory**: Gestor de Memoria RAM, paginación de 4KB y algoritmo de reemplazo LRU.
+4. **TxFS**: File System binario personalizado en disco (`txdb_storage.dat`) administrado mediante una File Allocation Table.
 
-### Formato de Registros Binarios en Disco (Multi-Tabla)
+### Formato de Registros Binarios en Disco
 Cada página de 4KB en `TxMemory` y bloque en `TxFS` almacena estructuras de datos binarias empaquetadas con `#pragma pack(1)` para soportar múltiples tablas en el disco:
 
 ```cpp
