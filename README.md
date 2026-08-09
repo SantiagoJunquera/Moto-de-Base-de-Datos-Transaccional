@@ -72,7 +72,7 @@ El proyecto fue validado con **17 pruebas unitarias e integrales** en **GoogleTe
 
 ### B. Compilación desde la Consola (PowerShell / CMD)
 
-Abrir la terminal en la raíz del repositorio (`c:\Users\junqu\Desktop\TxDB-OS`):
+Abrir la terminal en la raíz del repositorio:
 
 ```powershell
 # 1. Configurar la carpeta de build con CMake
